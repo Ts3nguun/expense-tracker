@@ -3,20 +3,33 @@
 import { useEffect, useState } from "react";
 
 export default function Home() {
-  const [articles , setArticle] = useState([]);
+  const [categories, setCategories] = useState([]);
 
-  useEffect(() =>{
-    fetch("http://localhost:4000/articles")
-    .then(res => res.json())
-    .then(data =>{
-      setArticle(data)
-    });
-  },[]);
+  function loadList() {
+    fetch("http://localhost:4000/categories/list")
+      .then((res) => res.json())
+      .then((data) => {
+        setCategories(data)
+      });
+  }
 
+  useEffect(() => {
+    loadList
+  }, []);
+
+  function createNew() {
+    const name = prompt("Name...");
+    fetch(`http://localhost:4000/categories/create?name=${name}`)
+      .then((res) => res.json())
+      .then(data => {
+        loadList();
+      });
+  }
   return (
     <main>
-      {articles.map((article) => (
-        <div key={article.id}>{article.title}</div>
+      <button onClick={createNew}>Add new</button>
+      {categories.map((category) => (
+        <div key={category.name}>{category.name}</div>
       ))}
     </main>
   );
