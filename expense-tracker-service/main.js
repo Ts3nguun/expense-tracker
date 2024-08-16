@@ -13,32 +13,39 @@ const content = fs.readFileSync("categories.json", "utf-8");
 let categories = JSON.parse(content);
 
 //LIST
-app.get('/categories/list', (req, res) => {
+app.get('/categories', (req, res) => {
+    res.json(categories);
+});
+
+app.get('/categories', (req, res) => {
+    const { id } = req.params;
+    const category = categories.find(cat.id === id);
     res.json(categories);
 });
 
 //CREATE
-app.post('/categories/create', (req, res) => {
-    const {name} = req.body;
+app.post('/categories', (req, res) => {
+    const { name } = req.body;
     console.log(req.body)
     categories.push({ id: new Date().toISOString(), name: name });
-    fs.writeFileSync('categories.json', JSON.stringify(categories) );
+    fs.writeFileSync('categories.json', JSON.stringify(categories));
     res.json(["succes"])
 });
 
 //UPDATE
-app.put('/categories/update', (req, res) => {
-    const {id, name} = req.query;
+app.put('/categories/:id', (req, res) => {
+    const { id } = req.params;
+    const { name } = req.body;
     const index = categories.findIndex((cat) => cat.id === id);
-    fs.writeFileSync('categories.json', JSON.stringify(categories) );
+    fs.writeFileSync('categories.json', JSON.stringify(categories));
     res.json(["succes"])
 });
 
 //DELETE
-app.delete('/categories/delete', (req, res) => {
-    const {id} = req.query;
+app.delete('/categories/:id', (req, res) => {
+    const { id } = req.params;
     categories = categories.filter((cat) => cat.id !== id);
-    fs.writeFileSync('categories.json', JSON.stringify(categories) );
+    fs.writeFileSync('categories.json', JSON.stringify(categories));
     res.json(["succes"])
 });
 
