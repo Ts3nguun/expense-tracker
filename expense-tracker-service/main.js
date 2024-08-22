@@ -1,25 +1,10 @@
-const express = require('express')
-const app = express()
-const port = 4000
-const cors = require('cors')
-
+const {startApp} = require('./configs/basic')
 const fs = require('fs')
 
-app.use(cors());
-app.use(express.json());
-
-
-const content = fs.readFileSync("categories.json", "utf-8");
+const content = fs.readFileSync("data/categories.json", "utf-8");
 let categories = JSON.parse(content);
 
 
-async function createNewCategory(form) {
-    const id = uuidv4();
-    form.id = id;
-    categories.push(form);
-    fs.writeFileSync("categories.json", JSON.stringify(categories));
-    return id;
-}
 
 
 //LIST
@@ -50,7 +35,7 @@ app.put('/categories/:id', (req, res) => {
     }
     const index = categories.findIndex((cat) => cat.id === id);
     categories[index].name = name;
-    fs.writeFileSync('categories.json', JSON.stringify(categories));
+    fs.writeFileSync('data/categories.json', JSON.stringify(categories));
     res.json(["succes"])
 });
 
@@ -64,10 +49,8 @@ if (deleteIndex < 0) {
 }
 
 categories = categories.filter((cat) => cat.id !== id);
-fs.writeFileSync('categories.json', JSON.stringify(categories));
+fs.writeFileSync('data/categories.json', JSON.stringify(categories));
 res.sendStatus(204);
 });
 
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
-})
+
