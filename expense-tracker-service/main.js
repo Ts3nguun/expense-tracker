@@ -2,8 +2,7 @@ const {startApp} = require('./configs/basic')
 const {createNewCategory, getCategories, getOneCategory, updateCategory, deleteCategory} = require('./service/catogyService')
 const fs = require('fs')
 
-const app = startApp
-
+const app = startApp()
 
 //LIST
 app.get('/categories', (req, res) => {
@@ -40,10 +39,10 @@ app.put('/categories/:id', async (req, res) => {
 //DELETE
 app.delete('/categories/:id', async (req, res) => {
     const { id } = req.params;
-if (deleteIndex < 0) {
-    res.sendStatus(404);
-    return;
-}
+// if (deleteIndex < 0) {
+//     res.sendStatus(404);
+//     return;
+// }
 await deleteCategory(id )
 res.sendStatus(204);
 });

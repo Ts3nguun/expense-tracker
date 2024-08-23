@@ -6,7 +6,7 @@ export default function Home() {
   const [categories, setCategories] = useState([]);
 
   function loadList() {
-    fetch("http://localhost:4000/categories")
+    fetch("http://localhost:4000/data/categories")
       .then((res) => res.json())
       .then((data) => {
         setCategories(data)
@@ -18,7 +18,7 @@ export default function Home() {
   },[]);
 
   function Delete(id) {
-    fetch(`http://localhost:4000/categories/${id}`, {
+    fetch(`http://localhost:4000/data/categories/${id}`, {
       method: "DELETE",
     }).then((res) => {
       if (res.status === 404) {
@@ -30,7 +30,7 @@ export default function Home() {
 
   function createNew() {
     const name = prompt("Name");
-    fetch(`http://localhost:4000/categories`, {
+    fetch(`http://localhost:4000/data/categories`, {
       method: "POST",
       body: JSON.stringify({ name: name }),
       headers: {
