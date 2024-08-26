@@ -1,43 +1,36 @@
 const fs = require('fs')
 const { v4: uuidv4 } = require('uuid');
+const { sql } = require('../configs/database');
 
-
-
-async function createNewCategory(form) {
+async function createNewCategory({name}) {
     const id = uuidv4();
-    form.id = id;
-    categories.push(form);
-    fs.writeFileSync("data/categories.json", JSON.stringify(categories));
+    await sql`insert into category(id, name) values (${id}, ${name})`;
     return id;
 }
 
-function getCategories() {
-    const content = fs.readFileSync("data/categories.json", "utf-8");
-    const categories = JSON.parse(content);
-    return categories;
+async function getCategories() {
+    const list = await sql`select * from category`;
+    return list;
 }
 
-function getOneCategory(id) { 
-    
-}
+// function getOneCategory(id) { 
 
-function updateCategory(id, update) {
-    const index = categories.findIndex((cat) => cat.id === id);
-    categories[index].name = name;
-    fs.writeFileSync('data/categories.json', JSON.stringify(categories));
-}
+// }
 
-function deleteCategory(id) {
-    const deleteIndex = categories.findIndex((cat) => cat.id === id);
-    categories = categories.filter((cat) => cat.id !== id);
-    fs.writeFileSync('data/categories.json', JSON.stringify(categories));
-}
+// function updateCategory(id, update) {
+//     const index = categories.findIndex((cat) => cat.id === id);
+//     categories[index].name = name;
+//     fs.writeFileSync('data/categories.json', JSON.stringify(categories));
+// }
+
+// function deleteCategory(id) {
+//     const deleteIndex = categories.findIndex((cat) => cat.id === id);
+//     categories = categories.filter((cat) => cat.id !== id);
+//     fs.writeFileSync('data/categories.json', JSON.stringify(categories));
+// }
 
 
 module.exports = {
     createNewCategory,
     getCategories,
-    getOneCategory,
-    updateCategory,
-    deleteCategory,
 };

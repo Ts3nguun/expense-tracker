@@ -1,50 +1,37 @@
-const {startApp} = require('./configs/basic')
-const {createNewCategory, getCategories, getOneCategory, updateCategory, deleteCategory} = require('./service/catogyService')
-const fs = require('fs')
-
-const app = startApp()
+const { app } = require('./configs/basic.js')
+const { sql } = require('./configs/database.js')
+const { createNewCategory, getCategories,} = require('./service/catogyService')
 
 //LIST
-app.get('/categories', (req, res) => {
-    const categories = getCategories();
+app.get('/categories', async(req, res) => {
+    const categories = await getCategories();
     res.json(categories);
-});
-
-app.get("/categories:id", (req, res) => {
-    const { id } = req.params;
-    const one = getOneCategory(id);
-    res.json(one);
 });
 
 //CREATE
 app.post("/categories", async (req, res) => {
-    const { name } = req.body;
-    const id = await createNewCategory ({name});
-    res.status(201).json({id})
+    const {name} = req.body;
+    const id = await createNewCategory({name});
+    res.status(201).json({ id })
 });
 
-//UPDATE
-app.put('/categories/:id', async (req, res) => {
-    const { id } = req.params;
-    const { name } = req.body;
-    if (!name) {
-        res.status(400).json({ message : "`Name` field is required"});
-        return;
-    }
 
-    await updateCategory(id, {name});
-    res.sendStatus(204);
+
+app.get("/dbtest", async (req, res) => {
+const result = await sql`select version()`;
+console.log(result)
+res.json({result});
 });
 
-//DELETE
-app.delete('/categories/:id', async (req, res) => {
-    const { id } = req.params;
-// if (deleteIndex < 0) {
-//     res.sendStatus(404);
-//     return;
-// }
-await deleteCategory(id )
-res.sendStatus(204);
-});
+// //DELETE
+// app.delete('/categories/:id', async (req, res) => {
+//     const { id } = req.params;
+// // if (deleteIndex < 0) {
+// //     res.sendStatus(404);
+// //     return;
+// // }
+// await deleteCategory(id )
+// res.sendStatus(204);
+// });
 
 

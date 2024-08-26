@@ -7,13 +7,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-function startApp() {
-    app.listen(port, () => {
-        console.log(`Example app listening on port ${port}`)
-    });
-    return app;
-};
+app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`)
+});
 
 module.exports = {
-    startApp,
+    app,
 };

@@ -6,23 +6,23 @@ export default function Home() {
   const [categories, setCategories] = useState([]);
 
   function loadList() {
-    fetch("http://localhost:4000/data/categories")
+    fetch("http://localhost:4000/categories")
       .then((res) => res.json())
       .then((data) => {
         setCategories(data)
       });
   }
-   
+
   useEffect(() => {
     loadList();
-  },[]);
+  }, []);
 
   function Delete(id) {
-    fetch(`http://localhost:4000/data/categories/${id}`, {
+    fetch(`http://localhost:4000/categories/${id}`, {
       method: "DELETE",
     }).then((res) => {
       if (res.status === 404) {
-        alert ("Category not found");
+        alert("Category not found");
       }
       loadList();
     });
@@ -30,21 +30,24 @@ export default function Home() {
 
   function createNew() {
     const name = prompt("Name");
-    fetch(`http://localhost:4000/data/categories`, {
+    fetch(`http://localhost:4000/categories`, {
       method: "POST",
       body: JSON.stringify({ name: name }),
       headers: {
         "Content-type": "application/json; charset=UTF-8",
       }
     })
-      .then ((res) => res.json())
       .then(() => {
         loadList();
       });
   }
+
+  console.log({categories})
   return (
     <main>
-      <button onClick={createNew} className="btn">Add new</button>
+      <div>
+        <button onClick={createNew} className="btn">Add new</button>
+      </div>
       {categories.map((category) => (
         <div key={category.id} className="flex gap-5 ">
           <div >{category.name}</div>
