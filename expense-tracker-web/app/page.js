@@ -28,6 +28,17 @@ export default function Home() {
     });
   }
 
+  function Update(id) {
+    fetch(`http://localhost:4000/categories/${id}`, {
+      method: "DELETE",
+    }).then((res) => {
+      if (res.status === 404) {
+        alert("Category not found");
+      }
+      loadList();
+    });
+  }
+
   function createNew() {
     const name = prompt("Name");
     fetch(`http://localhost:4000/categories`, {
@@ -51,7 +62,7 @@ export default function Home() {
       {categories.map((category) => (
         <div key={category.id} className="flex gap-5 ">
           <div >{category.name}</div>
-          {/* <button onClick={edit}>edit</button> */}
+          <button onClick={() => Update(category.id)}>delete</button>
           <button onClick={() => Delete(category.id)}>delete</button>
         </div>
       ))}

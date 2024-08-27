@@ -13,24 +13,28 @@ async function getCategories() {
     return list;
 }
 
-// function getOneCategory(id) { 
+async function getOneCategory(id) { 
+    const list = await sql `select * from category where id = ${id}`;
+    if(list.length){
+        return list[0]
+    }
+    return null;
+}
 
-// }
+async function deleteOneCategory(id) {
+    await sql`delete from category where id = ${id}`;
+}
 
-// function updateCategory(id, update) {
-//     const index = categories.findIndex((cat) => cat.id === id);
-//     categories[index].name = name;
-//     fs.writeFileSync('data/categories.json', JSON.stringify(categories));
-// }
+async function updateOneCategory(id, update) {
+    await sql`update category set name = ${update.name} where id = ${id}`;
+}
 
-// function deleteCategory(id) {
-//     const deleteIndex = categories.findIndex((cat) => cat.id === id);
-//     categories = categories.filter((cat) => cat.id !== id);
-//     fs.writeFileSync('data/categories.json', JSON.stringify(categories));
-// }
 
 
 module.exports = {
     createNewCategory,
     getCategories,
+    getOneCategory,
+    deleteOneCategory,
+    updateOneCategory,
 };
