@@ -1,5 +1,4 @@
 const { app } = require('./configs/basic.js')
-const { sql } = require('./configs/database.js')
 const { createNewCategory, getCategories, getOneCategory, deleteOneCategory, updateOneCategory, } = require('./service/catogyService')
 
 //LIST
@@ -20,17 +19,9 @@ app.get("/categories/:id", async (req, res) => {
 
 //CREATE
 app.post("/categories", async (req, res) => {
-    const { name } = req.body;
-    const id = await createNewCategory({ name });
+    const newCategory = req.body;
+    const id = await createNewCategory(newCategory)
     res.status(201).json({ id })
-});
-
-
-
-app.get("/dbtest", async (req, res) => {
-    const result = await sql`select version()`;
-    console.log(result)
-    res.json({ result });
 });
 
 //DELETE
