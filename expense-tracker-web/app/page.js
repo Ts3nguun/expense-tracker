@@ -1,6 +1,13 @@
 "use client"
 
 
+import { Input } from "@/components/ui/input"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -8,13 +15,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-
 
 
 import { useEffect, useState } from "react";
+import { House } from "lucide-react"
 
 export default function Home() {
   const [categories, setCategories] = useState([]);
@@ -76,24 +81,27 @@ export default function Home() {
   console.log({ categories })
   return (
     <main>
-      <button onClick={() => setOpen(true)}>---add new---</button>
-      <Dialog open={true}>
-        <DialogTrigger asChild>
-          <Button variant="outline">Edit Profile</Button>
-        </DialogTrigger>
+      <Button variant="outline" onClick={() => setOpen(true)}>---add new---</Button>
+      <Dialog open={open}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Edit profile</DialogTitle>
-            <button onClick={() => setOpen(false)}>
+            <DialogTitle>Add category</DialogTitle>
+            <Button variant="secondary" onClick={() => setOpen(false)}>
               close
-            </button>
+            </Button>
           </DialogHeader>
-          <div className="py-4 gap-5">
-            <div>
-              <Input
-                className="col-span-3"
-              />
-            </div>
+          <div className="py-4 gap-5 flex">
+
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline"><House /></Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80">
+                <div>
+                <House/>
+                </div>
+              </PopoverContent>
+            </Popover>
             <div>
               <Input
                 id="username"
@@ -102,7 +110,7 @@ export default function Home() {
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit">Save changes</Button>
+            <Button variant="destructive" type="submit" className="bg-green-600 w-full rounded-full hover:bg-green-800">Add</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
