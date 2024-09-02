@@ -19,11 +19,52 @@ import {
 
 
 import { useEffect, useState } from "react";
-import { House } from "lucide-react"
+import { Check, House } from "lucide-react"
+
+
+const categoryIcons = [
+  {
+    name: "home",
+    Icon: House
+  },
+  {
+    name: "home",
+    Icon: House
+  },
+  {
+    name: "home",
+    Icon: House
+  },
+  {
+    name: "home",
+    Icon: House
+  },
+]
+
+const categoryColors = [
+  {
+    name: 'blue',
+    value: "#0166FF"
+  },
+  {
+    name: 'blue',
+    value: "#0166FF"
+  },
+  {
+    name: 'blue',
+    value: "#0166FF"
+  },
+  {
+    name: 'blue',
+    value: "#0166FF"
+  },
+]
 
 export default function Home() {
   const [categories, setCategories] = useState([]);
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
+  const [icon, setIcon] = useState("");
+  const [color, setColor] = useState("");
 
   async function loadList() {
     const name = await fetch("http://localhost:4000/categories")
@@ -68,7 +109,10 @@ export default function Home() {
 
     const name = await fetch(`http://localhost:4000/categories`, {
       method: "POST",
-      body: JSON.stringify({ name: inputName }),
+      body: JSON.stringify({ 
+        name: name ,
+        color: color,
+      }),
       headers: {
         "Content-type": "application/json; charset=UTF-8",
       }
@@ -97,16 +141,23 @@ export default function Home() {
                 <Button variant="outline"><House /></Button>
               </PopoverTrigger>
               <PopoverContent className="w-80">
-                <div>
-                <House/>
+                <div className="grid grid-cols-6">
+                  {categoryIcons.map(({ name, Icon }) => (
+                    <div key={name}>
+                      <Icon />
+                    </div>
+                  ))}
+                  {categoryColors.map(({ name, value }) => (
+                    <div key={name} onClick={() => setColor(name)} className={`w-8 h-8 rounded-full text-white flex justify-center items-center`} style={{ backgroundColor: value }}>
+                      {color === name && <Check className="w-4 h-4"/>}
+                    </div>
+                  ))}
                 </div>
+
               </PopoverContent>
             </Popover>
             <div>
-              <Input
-                id="username"
-                className="col-span-3"
-              />
+
             </div>
           </div>
           <DialogFooter>
