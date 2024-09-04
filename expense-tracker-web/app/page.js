@@ -1,6 +1,6 @@
 "use client"
 
-
+import { toast } from "sonner"
 import { Input } from "@/components/ui/input"
 import {
   Popover,
@@ -20,6 +20,7 @@ import {
 
 import { useEffect, useState } from "react";
 import { Check, Copy, House, HousePlus, IdCard, Image, Leaf, ListCheck, Mic, NotepadText, SearchX, SquareUserRound, TableProperties } from "lucide-react"
+import { Toaster } from "@/components/ui/sonner"
 
 
 const categoryIcons = [
@@ -169,9 +170,11 @@ const categoryColors = [
 export default function Home() {
   const [categories, setCategories] = useState([]);
   const [open, setOpen] = useState(false);
-  const [icon, setIcon] = useState("");
-  const [color, setColor] = useState("");
-  const [name, setName] = useState("")
+  const [icon, setIcon] = useState("home");
+  const [color, setColor] = useState("blue");
+  const [name, setName] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [editingCategory, setEditingCategory] = useState();
 
   async function loadList() {
     const name = await fetch("http://localhost:4000/categories")
@@ -184,35 +187,10 @@ export default function Home() {
     loadList();
   }, []);
 
-  function Delete(id) {
-    fetch(`http://localhost:4000/categories/${id}`, {
-      method: "DELETE",
-    }).then((res) => {
-      if (res.status === 404) {
-        alert("Category not found");
-      }
-      loadList();
-    });
-  }
-
-  function Update(oldName, id) {
-    const newName = prompt("insert name ", oldName);
-    fetch(`http://localhost:4000/categories/${id}`, {
-      method: "put",
-      body: JSON.stringify({ name: newName }),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      }
-    }).then((res) => {
-      if (res.status === 404) {
-        alert("Category not found");
-      }
-      loadList();
-    });
-  }
-
   async function createNew() {
-    const name = await fetch(`http://localhost:4000/categories`, {
+    setLoading(true);
+
+    await fetch(`http://localhost:4000/categories`, {
       method: "POST",
       body: JSON.stringify({
         name: name,
@@ -225,11 +203,62 @@ export default function Home() {
     })
       .then(() => {
         loadList();
+        setLoading(false)
+        setOpen(false)
+        toast("Succesfully created")
       });
   }
 
+  function Delete(id) {
+    fetch(`http://localhost:4000/categories/${id}`, {
+      method: "DELETE",
+    }).then((res) => {
+      if (res.status === 404) {
+        alert("Category not found");
+      }
+      loadList();
+    });
+  }
+
+  async function Update(oldName, id) {
+    setLoading(true);
+
+    await fetch(`http://localhost:4000/categories/${editingCategory.id}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        name: name,
+        color: color,
+        icon: icon,
+      }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      }
+    })
+      .then(() => {
+        loadList();
+        setLoading(false)
+        setOpen(false)
+        toast("Succesfully updated")
+      });
+  }
+
+
+
+  useEffect(() => {
+    if (editingCategory) {
+      setOpen(true);
+      setName(editingCategory.name);
+      setIcon(editingCategory.icon);
+      setColor(editingCategory.color);
+    }
+  }, [editingCategory]);
+
+
+
+  console.log(editingCategory)
   return (
     <main>
+      <Toaster />
       <Button variant="outline" onClick={() => setOpen(true)}>---add new---</Button>
       <Dialog open={open}>
         <DialogContent className="sm:max-w-[425px]">
@@ -243,7 +272,7 @@ export default function Home() {
 
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline"><HousePlus /></Button>
+                <Button variant="outline"><CategoryIcon name={icon} color={color} /></Button>
               </PopoverTrigger>
               <PopoverContent className="w-80">
                 <div className="gap-10  ">
@@ -263,16 +292,24 @@ export default function Home() {
                       </div>
                     ))}
                   </div>
-                </div>                
+                </div>
               </PopoverContent>
             </Popover>
-              <Input value={name} onChange={(e) => setName(e.target.value)} className="col-span-3"/>
+            <Input disable={loading} value={name} onChange={(e) => setName(e.target.value)} className="col-span-3" />
             <div>
 
             </div>
           </div>
           <DialogFooter>
-            <Button variant="destructive" type="submit" className="bg-green-600 w-full rounded-full hover:bg-green-800">Add</Button>
+            {
+              editingCategory ? (
+                <Button disable={loading} className="bg-green-600 w-full rounded-full hover:bg-green-800 " onClick={Update}>update</Button>
+              ) : (
+                <Button disable={loading} className="bg-green-600 w-full rounded-full hover:bg-green-800 " onClick={createNew}>Add</Button>
+              )}
+
+
+
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -281,19 +318,40 @@ export default function Home() {
 
 
 
-      <div>
+      {/* <div>
         <button onClick={createNew} className="btn">Add new</button>
-      </div>
+      </div> */}
       {categories.map((category) => (
         <div key={category.id} className="flex gap-5 ">
-          <div >
+          <div className="flex gap-x-3">
+            <CategoryIcon name={category.icon} color={category.color} />
             {category.name}
-            {category.Ic}
           </div>
-          <button onClick={() => Update(category.name)}>update</button>
-          <button onClick={() => Delete(category.id)}>delete</button>
+          <Button onClick={() => setEditingCategory(category)}>update</Button>
+          <Button onClick={() => Delete(category.id)}>delete</Button>
         </div>
       ))}
     </main>
   );
+}
+function CategoryIcon({ name, color }) {
+  const iconObject = categoryIcons.find(item => item.name === name);
+
+  const colorObject = categoryColors.find((item) => item.name === color)
+
+  if (!iconObject) {
+    return null;
+  }
+
+  let hexColor;
+
+  if (!colorObject) {
+    hexColor = "#000";
+  } else {
+    hexColor = colorObject.value;
+  }
+
+  const { Icon } = iconObject;
+  return <Icon style={{ color: hexColor }}
+  />
 }

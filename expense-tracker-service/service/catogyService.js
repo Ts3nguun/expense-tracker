@@ -2,7 +2,7 @@ const fs = require('fs')
 const { v4: uuidv4 } = require('uuid');
 const { sql } = require('../configs/database');
 
-async function createNewCategory({name , color = 'blue' , icon = 'home'}) {
+async function createNewCategory({name , color , icon,}) {
     const id = uuidv4();
     await sql`insert into category(id, name, color, icon) values (${id}, ${name}, ${color}, ${icon})`;
     return id;
@@ -25,8 +25,9 @@ async function deleteOneCategory(id) {
     await sql`delete from category where id = ${id}`;
 }
 
-async function updateOneCategory(id, {name, color, icon}) {
-    await sql`update category set name = ${name}, color = ${color}, icon = ${icon},  where id = ${id}`;
+async function updateOneCategory(id, input) {
+    console.log({id})
+    await sql`update category set name = ${input.name}, color = ${input.color}, icon = ${input.icon}  where id = ${id}`;
 }
 
 
