@@ -19,7 +19,7 @@ import {
 
 
 import { useEffect, useState } from "react";
-import { Check, Copy, House, HousePlus, IdCard, Image, Leaf, ListCheck, Mic, NotepadText, SearchX, SquareUserRound, TableProperties } from "lucide-react"
+import { Check, Copy, House, HousePlus, IdCard, Image, Leaf, ListCheck, Mic, NotepadText, SearchX, SquareUserRound, TableProperties, X } from "lucide-react"
 import { Toaster } from "@/components/ui/sonner"
 
 
@@ -206,6 +206,7 @@ export default function Home() {
         setLoading(false)
         setOpen(false)
         toast("Succesfully created")
+        reset()
       });
   }
 
@@ -239,10 +240,39 @@ export default function Home() {
         setLoading(false)
         setOpen(false)
         toast("Succesfully updated")
+        reset()
       });
   }
 
 
+  function CategoryIcon({ name, color }) {
+    const iconObject = categoryIcons.find(item => item.name === name);
+  
+    const colorObject = categoryColors.find((item) => item.name === color)
+  
+    if (!iconObject) {
+      return null;
+    }
+  
+    let hexColor;
+  
+    if (!colorObject) {
+      hexColor = "#000";
+    } else {
+      hexColor = colorObject.value;
+    }
+  
+    const { Icon } = iconObject;
+    return <Icon style={{ color: hexColor }}
+    />
+  }
+  
+
+  function reset() {
+    setName('');
+    setColor("blue");
+    setIcon("home");
+  }
 
   useEffect(() => {
     if (editingCategory) {
@@ -263,10 +293,12 @@ export default function Home() {
       <Dialog open={open}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Add category</DialogTitle>
-            <Button variant="secondary" onClick={() => setOpen(false)}>
-              close
-            </Button>
+            <DialogTitle>
+              <div className="flex justify-between">
+                Add category
+                <X onClick={() => setOpen(false)} />
+              </div>
+            </DialogTitle>
           </DialogHeader>
           <div className="py-4 gap-5 flex">
 
@@ -313,14 +345,6 @@ export default function Home() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-
-
-
-
-      {/* <div>
-        <button onClick={createNew} className="btn">Add new</button>
-      </div> */}
       {categories.map((category) => (
         <div key={category.id} className="flex gap-5 ">
           <div className="flex gap-x-3">
@@ -331,27 +355,13 @@ export default function Home() {
           <Button onClick={() => Delete(category.id)}>delete</Button>
         </div>
       ))}
+
+      
+
+
+
+
+      
     </main>
   );
-}
-function CategoryIcon({ name, color }) {
-  const iconObject = categoryIcons.find(item => item.name === name);
-
-  const colorObject = categoryColors.find((item) => item.name === color)
-
-  if (!iconObject) {
-    return null;
-  }
-
-  let hexColor;
-
-  if (!colorObject) {
-    hexColor = "#000";
-  } else {
-    hexColor = colorObject.value;
-  }
-
-  const { Icon } = iconObject;
-  return <Icon style={{ color: hexColor }}
-  />
 }
